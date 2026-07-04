@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator — Loto 6/49</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Loto 6/49</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link active">Generator</a>
+        <a href="/arhiva.html" class="nav-link">Arhivă</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main main-generator">
+    <section class="generator-top">
+      <p class="draw-info-inline" id="draw-info-inline"></p>
+      <section class="variants-section" id="variants-section">
+        <p class="loading-msg">Se încarcă variantele...</p>
+      </section>
+      <button class="btn-generate" id="btn-generate">
+        <span class="btn-generate-text">Generează variantă nouă</span>
+      </button>
+    </section>
+
+    <header class="hero hero-compact hero-below">
+      <h1 class="hero-title">Generator<br>inteligent.</h1>
+      <p class="hero-subtitle">Algoritm multi-factor bazat pe 1.000+ extrageri: frecvență, gap, perechi, triplete, par/impar, sumă, decade și penalizări structurale.</p>
+      <p class="disclaimer" id="disclaimer"></p>
+    </header>
+
+    <section class="algorithm-section">
+      <h3 class="algo-title">Ce calculează algoritmul</h3>
+      <div class="algo-grid" id="algo-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Generator statistic · nu garantează câștiguri · probabilitate egală per combinație</p>
+  </footer>
+
+  <script src="/js/generator.js"></script>
+</body>
+</html>

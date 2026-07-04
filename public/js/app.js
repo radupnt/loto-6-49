@@ -1,0 +1,262 @@
+const POLL_INTERVAL_MS = 2 * 60 * 1000;
+
+const state = {
+  years: [],
+  currentYear: null,
+  stats: null,
+  lastUpdated: null,
+  eurRate: null,
+  variantMap: {},
+};
+
+const $ = (sel) => document.querySelector(sel);
+
+function formatRon(value) {
+  if (!value) return '';
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'RON',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatEur(ron) {
+  if (!ron || !state.eurRate) return '';
+  const eur = ron / state.eurRate;
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(eur);
+}
+
+function renderBalls(numbers, matchedSet) {
+  return numbers
+    .map((n) => {
+      const cls = matchedSet?.has(n) ? 'ball ball-match' : 'ball';
+      return `<span class="${cls}">${n}</span>`;
+    })
+    .join('');
+}
+
+function getMatchedNumbers(drawDate) {
+  return state.variantMap[drawDate] || null;
+}
+
+function renderWinnerBadge(cat1) {
+  const eurLine = (ron) => {
+    const eur = formatEur(ron);
+    return eur ? `<span class="badge-prize badge-eur">≈ ${eur}</span>` : '';
+  };
+
+  if (cat1.hasWinner) {
+    const label = cat1.winners === 1 ? '1 câștigător' : `${cat1.winners} câștigători`;
+    return `
+      <span class="badge badge-winner">${label}</span>
+      <span class="badge-prize">${formatRon(cat1.prize)}</span>
+      ${eurLine(cat1.prize)}
+    `;
+  }
+
+  return `
+    <span class="badge badge-report">Report</span>
+    <span class="badge-prize">Jackpot ${formatRon(cat1.jackpot)}</span>
+    ${eurLine(cat1.jackpot)}
+  `;
+}
+
+function renderDraws(draws) {
+  const container = $('#draws-body');
+
+  if (!draws.length) {
+    container.innerHTML = '<p class="empty">Nicio extragere găsită.</p>';
+    return;
+  }
+
+  container.innerHTML = draws.map((draw) => {
+    const matched = getMatchedNumbers(draw.date);
+    const matchCount = matched
+      ? draw.numbers.filter((n) => matched.has(n)).length
+      : 0;
+    const rowClass = matchCount > 0 ? 'draw-card draw-card-match' : 'draw-card';
+
+    return `
+    <article class="${rowClass}">
+      <div class="draw-card-numbers">
+        <div class="numbers">${renderBalls(draw.numbers, matched)}</div>
+      </div>
+      <div class="draw-card-date">
+        ${draw.dateDisplay}
+        ${matchCount ? `<span class="match-count">${matchCount} potriviri</span>` : ''}
+      </div>
+      <div class="draw-card-cat">${renderWinnerBadge(draw.category1)}</div>
+    </article>`;
+  }).join('');
+}
+
+function renderYearSelect(years) {
+  const select = $('#year-select');
+  select.innerHTML = years
+    .slice()
+    .reverse()
+    .map(({ year, draws }) => `
+      <option value="${year}"${year === state.currentYear ? ' selected' : ''}>
+        ${year} (${draws} extrageri)
+      </option>
+    `)
+    .join('');
+}
+
+function renderStats(stats) {
+  $('#stat-draws').textContent = stats.totalDraws.toLocaleString('ro-RO');
+  $('#stat-winners').textContent = stats.winnersCount.toLocaleString('ro-RO');
+  $('#stat-reports').textContent = stats.reportsCount.toLocaleString('ro-RO');
+}
+
+async function loadExchangeRate() {
+  try {
+    const res = await fetch('/api/exchange-rate');
+    if (res.ok) {
+      const data = await res.json();
+      state.eurRate = data.rate;
+    }
+  } catch {
+    state.eurRate = 5.2374;
+  }
+}
+
+async function loadVariantMap() {
+  try {
+    const res = await fetch('/api/generator/matches');
+    if (res.ok) {
+      const data = await res.json();
+      state.variantMap = {};
+      for (const [key, nums] of Object.entries(data.matches)) {
+        state.variantMap[key] = new Set(nums);
+      }
+    }
+  } catch {
+    state.variantMap = {};
+  }
+}
+
+async function loadDraws(year) {
+  const container = $('#draws-body');
+  container.innerHTML = '<p class="loading">Se încarcă...</p>';
+
+  try {
+    const res = await fetch(`/api/draws?year=${year}`);
+    if (!res.ok) throw new Error('Eroare la încărcarea datelor');
+    const data = await res.json();
+
+    $('#section-title').textContent = `Extrageri ${year}`;
+    $('#draw-count').textContent = `${data.count} extrageri`;
+    renderDraws(data.draws);
+  } catch (err) {
+    container.innerHTML = `<p class="error">${err.message}</p>`;
+  }
+}
+
+function selectYear(year) {
+  state.currentYear = year;
+  $('#year-select').value = year;
+  loadDraws(year);
+}
+
+function updateStatus(lastUpdated, status) {
+  const el = $('#last-updated');
+  if (!lastUpdated) {
+    el.textContent = '';
+    return;
+  }
+
+  const updated = new Date(lastUpdated);
+  const dateStr = updated.toLocaleDateString('ro-RO', {
+    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+
+  if (status?.isRefreshing) {
+    el.textContent = `Ultima actualizare: ${dateStr} · se actualizează acum...`;
+    el.classList.add('syncing');
+    return;
+  }
+
+  el.classList.remove('syncing');
+  let text = `Ultima actualizare: ${dateStr}`;
+
+  if (status?.nextScheduledRefresh) {
+    const next = new Date(status.nextScheduledRefresh);
+    const nextStr = next.toLocaleDateString('ro-RO', {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+    });
+    text += ` · următoarea automată: ${nextStr}`;
+  }
+
+  el.textContent = text;
+}
+
+async function init({ reloadDraws = true } = {}) {
+  try {
+    await Promise.all([loadExchangeRate(), loadVariantMap()]);
+
+    const [statsRes, yearsRes, statusRes] = await Promise.all([
+      fetch('/api/stats'),
+      fetch('/api/years'),
+      fetch('/api/status'),
+    ]);
+
+    if (!statsRes.ok || !yearsRes.ok) {
+      throw new Error('Date indisponibile. Serverul le va prelua automat.');
+    }
+
+    const statsData = await statsRes.json();
+    const yearsData = await yearsRes.json();
+    const statusData = statusRes.ok ? await statusRes.json() : null;
+
+    const dataChanged = state.lastUpdated && state.lastUpdated !== statsData.lastUpdated;
+    state.lastUpdated = statsData.lastUpdated;
+    state.stats = statsData.stats;
+    state.years = yearsData.years;
+
+    renderStats(state.stats);
+    updateStatus(statsData.lastUpdated, statusData);
+
+    const latestYear = state.years[state.years.length - 1]?.year;
+    if (latestYear && !state.currentYear) {
+      state.currentYear = latestYear;
+    }
+
+    renderYearSelect(state.years);
+
+    if (latestYear && (reloadDraws || dataChanged)) {
+      await loadDraws(state.currentYear);
+    }
+  } catch (err) {
+    $('#draws-body').innerHTML = `<p class="error">${err.message}</p>`;
+    $('#hero-stats').style.display = 'none';
+  }
+}
+
+async function pollForUpdates() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) return;
+    const status = await res.json();
+    updateStatus(status.lastUpdated || state.lastUpdated, status);
+
+    if (status.isRefreshing) return;
+    if (status.lastUpdated && status.lastUpdated !== state.lastUpdated) {
+      await loadVariantMap();
+      await init({ reloadDraws: true });
+    }
+  } catch {
+    /* ignoră */
+  }
+}
+
+$('#year-select').addEventListener('change', (e) => {
+  selectYear(parseInt(e.target.value, 10));
+});
+
+init();
+setInterval(pollForUpdates, POLL_INTERVAL_MS);

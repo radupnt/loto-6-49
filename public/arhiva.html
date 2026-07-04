@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loto 6/49 — Arhivă Rezultate</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Loto 6/49</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Generator</a>
+        <a href="/arhiva.html" class="nav-link active">Arhivă</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1 class="hero-title">Rezultatele<br>ultimilor 10 ani.</h1>
+    <p class="hero-subtitle">Toate extragerile Loto 6 din 49, organizate pe ani, cu informații despre câștigători la categoria I.</p>
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat-card">
+        <span class="stat-value" id="stat-draws">—</span>
+        <span class="stat-label">Extrageri</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-winners">—</span>
+        <span class="stat-label">Cu câștigători</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-reports">—</span>
+        <span class="stat-label">Report</span>
+      </div>
+    </div>
+    <p class="hero-updated" id="last-updated"></p>
+  </header>
+
+  <main class="main">
+    <section class="year-section">
+      <label class="year-select-label" for="year-select">Selectează anul</label>
+      <select class="year-select" id="year-select"></select>
+    </section>
+
+    <p class="match-legend">Numerele cu fundal verde au ieșit și în variantele noastre generate pentru acea extragere.</p>
+
+    <section class="table-section">
+      <div class="table-header">
+        <h2 class="section-title" id="section-title">Extrageri</h2>
+        <span class="draw-count" id="draw-count"></span>
+      </div>
+
+      <div class="table-wrapper">
+        <div class="draws-list" id="draws-body">
+          <p class="loading">Se încarcă datele...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Date preluate de pe <a href="http://noroc-chior.ro/Loto/6-din-49/arhiva-rezultate.php" target="_blank" rel="noopener">noroc-chior.ro</a> · curs EUR: <a href="https://www.bnr.ro" target="_blank" rel="noopener">BNR</a></p>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

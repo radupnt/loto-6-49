@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: loto-6-49
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AUTO_REFRESH_HOURS
+        value: 3
+      - key: CRON_SECRET
+        generateValue: true

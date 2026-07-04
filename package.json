@@ -1,0 +1,22 @@
+{
+  "name": "loto-6-49",
+  "version": "1.0.0",
+  "description": "Aplicație personală pentru rezultatele Loto 6/49",
+  "type": "module",
+  "scripts": {
+    "scrape": "node scripts/scrape.js",
+    "start": "node server.js",
+    "start:prod": "NODE_ENV=production node server.js",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:restart": "pm2 restart loto-6-49",
+    "pm2:logs": "pm2 logs loto-6-49",
+    "postinstall": "node -e \"const fs=require('fs');['data','logs'].forEach(d=>fs.mkdirSync(d,{recursive:true}))\""
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "express": "^4.21.2"
+  }
+}
