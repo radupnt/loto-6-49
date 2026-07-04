@@ -791,3 +791,50 @@ a:hover {
     font-size: 24px;
   }
 }
+
+/* EuroMillions */
+.ball-star {
+  background: linear-gradient(135deg, #ffd60a 0%, #ff9f0a 100%);
+  color: #1d1d1f;
+  font-weight: 700;
+}
+
+.ball-star.ball-match {
+  background: linear-gradient(135deg, #30d158 0%, #34c759 100%);
+  color: #fff;
+}
+
+.balls-separator {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.variant-balls .balls-separator,
+.draw-card-numbers .balls-separator {
+  align-self: center;
+}
+
+.archive-embedded {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.em-stats {
+  margin-bottom: 8px;
+}
+
+.em-generator-top {
+  margin-bottom: 0;
+}
+
+.draw-card-numbers .numbers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}

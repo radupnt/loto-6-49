@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EuroMillions UK — Generator & Arhivă</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Loto Hub</a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Loto 6/49</a>
+        <a href="/arhiva.html" class="nav-link">Arhivă Loto</a>
+        <a href="/euromillions.html" class="nav-link active">EuroMillions</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main main-generator">
+    <section class="generator-top em-generator-top">
+      <p class="draw-info-inline" id="draw-info-inline"></p>
+      <section class="variants-section" id="variants-section">
+        <p class="loading-msg">Se încarcă variantele...</p>
+      </section>
+      <button class="btn-generate" id="btn-generate">
+        <span class="btn-generate-text">Generează variantă nouă</span>
+      </button>
+    </section>
+
+    <header class="hero hero-compact hero-below">
+      <h1 class="hero-title">EuroMillions<br>UK.</h1>
+      <p class="hero-subtitle">5 numere (1–50) + 2 Lucky Stars (1–12). Extrageri Marți și Vineri, ora 20:45 UK. Generator bazat pe ultimele 10 ani de rezultate.</p>
+      <p class="disclaimer" id="disclaimer"></p>
+    </header>
+
+    <section class="archive-embedded">
+      <div class="hero-stats em-stats" id="hero-stats">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-draws">—</span>
+          <span class="stat-label">Extrageri</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-winners">—</span>
+          <span class="stat-label">Cu câștigători</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-reports">—</span>
+          <span class="stat-label">Report</span>
+        </div>
+      </div>
+      <p class="hero-updated" id="last-updated"></p>
+
+      <section class="year-section">
+        <label class="year-select-label" for="year-select">Selectează anul</label>
+        <select class="year-select" id="year-select"></select>
+      </section>
+
+      <p class="match-legend">Numerele și stelele cu fundal verde au ieșit și în variantele noastre generate.</p>
+
+      <section class="table-section">
+        <div class="table-header">
+          <h2 class="section-title" id="section-title">Extrageri</h2>
+          <span class="draw-count" id="draw-count"></span>
+        </div>
+        <div class="table-wrapper">
+          <div class="draws-list" id="draws-body">
+            <p class="loading">Se încarcă datele...</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Generator statistic · nu garantează câștiguri · probabilitate egală per combinație</p>
+  </footer>
+
+  <script src="/js/euromillions.js"></script>
+</body>
+</html>
