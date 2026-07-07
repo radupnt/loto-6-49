@@ -335,6 +335,10 @@ app.post('/api/euromillions/generator/generate', (req, res) => {
   }
 });
 
+app.get('/arhiva.html', (req, res) => {
+  res.redirect(301, '/');
+});
+
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
   const file = path.join(__dirname, 'public', req.path === '/' ? 'index.html' : req.path);

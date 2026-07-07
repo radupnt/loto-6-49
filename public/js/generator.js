@@ -1,5 +1,4 @@
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
+const POLL_INTERVAL_MS = 2 * 60 * 1000;
 
 const ALGO_FACTORS = [
   { key: 'frequency', label: 'Frecvență istorică', desc: 'Proximitate de media așteptată per număr' },
@@ -17,10 +16,46 @@ const ALGO_FACTORS = [
   { key: 'diversity', label: 'Diversitate', desc: 'Distanță minimă între variante generate' },
 ];
 
-let state = { nextDraw: null, draws: [] };
+const state = {
+  nextDraw: null,
+  years: [],
+  currentYear: null,
+  stats: null,
+  lastUpdated: null,
+  eurRate: null,
+  variantMap: {},
+};
 
-function renderBalls(numbers) {
-  return numbers.map((n) => `<span class="ball ball-lg">${n}</span>`).join('');
+const $ = (sel) => document.querySelector(sel);
+
+function formatRon(value) {
+  if (!value) return '';
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'RON',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatEur(ron) {
+  if (!ron || !state.eurRate) return '';
+  const eur = ron / state.eurRate;
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(eur);
+}
+
+function renderBalls(numbers, matchedSet, large = false) {
+  const sizeClass = large ? 'ball-lg' : '';
+  return numbers
+    .map((n) => {
+      const matchCls = matchedSet?.has(n) ? 'ball-match' : '';
+      const cls = ['ball', sizeClass, matchCls].filter(Boolean).join(' ');
+      return `<span class="${cls}">${n}</span>`;
+    })
+    .join('');
 }
 
 function renderBreakdown(breakdown) {
@@ -40,7 +75,7 @@ function renderBreakdown(breakdown) {
     .join('');
 }
 
-function renderVariant(variant, index, drawDisplay) {
+function renderVariant(variant) {
   const sourceLabel = variant.source === 'auto' ? 'Automat' : 'Manual';
   const sourceClass = variant.source === 'auto' ? 'source-auto' : 'source-manual';
   const meta = variant.meta || {};
@@ -48,11 +83,11 @@ function renderVariant(variant, index, drawDisplay) {
   return `
     <article class="variant-card">
       <div class="variant-header">
-        <span class="variant-index">Varianta ${index + 1}</span>
+        <span class="variant-index">Varianta 1</span>
         <span class="variant-source ${sourceClass}">${sourceLabel}</span>
         <span class="variant-score">Scor ${(variant.score * 100).toFixed(1)}%</span>
       </div>
-      <div class="variant-balls">${renderBalls(variant.numbers)}</div>
+      <div class="variant-balls">${renderBalls(variant.numbers, null, true)}</div>
       <div class="variant-meta">
         <span>Suma ${meta.sum}</span>
         <span>${meta.odd} impare · ${meta.even} pare</span>
@@ -65,25 +100,11 @@ function renderVariant(variant, index, drawDisplay) {
     </article>`;
 }
 
-function renderDrawBlock(drawEntry) {
-  const variants = drawEntry.variants || [];
-  if (!variants.length) return '';
-
-  return `
-    <div class="variants-grid">
-      ${variants.map((v, i) => renderVariant(v, i, drawEntry.drawDisplay)).join('')}
-    </div>`;
-}
-
 function updateDrawInfo(data) {
   const next = data.nextDraw;
   if (!next) return;
-
   const el = $('#draw-info-inline');
-  if (el) {
-    el.textContent = `Extragerea pentru ${next.display}`;
-  }
-
+  if (el) el.textContent = `Extragerea pentru ${next.display}`;
   state.nextDraw = next;
 }
 
@@ -97,9 +118,7 @@ function renderVariants(data) {
     return;
   }
 
-  const single = { ...entry, variants: entry.variants.slice(0, 1) };
-  section.innerHTML = renderDrawBlock(single);
-  state.draws = [single];
+  section.innerHTML = `<div class="variants-grid">${renderVariant(entry.variants[0])}</div>`;
 }
 
 function renderAlgoGrid() {
@@ -111,17 +130,224 @@ function renderAlgoGrid() {
   `).join('');
 }
 
+function renderWinnerBadge(cat1) {
+  const eurLine = (ron) => {
+    const eur = formatEur(ron);
+    return eur ? `<span class="badge-prize badge-eur">≈ ${eur}</span>` : '';
+  };
+
+  if (cat1.hasWinner) {
+    const label = cat1.winners === 1 ? '1 câștigător' : `${cat1.winners} câștigători`;
+    return `
+      <span class="badge badge-winner">${label}</span>
+      <span class="badge-prize">${formatRon(cat1.prize)}</span>
+      ${eurLine(cat1.prize)}
+    `;
+  }
+
+  return `
+    <span class="badge badge-report">Report</span>
+    <span class="badge-prize">Jackpot ${formatRon(cat1.jackpot)}</span>
+    ${eurLine(cat1.jackpot)}
+  `;
+}
+
+function getMatchedNumbers(drawDate) {
+  const matched = state.variantMap[drawDate];
+  return matched ? new Set(matched) : null;
+}
+
+function renderDraws(draws) {
+  const container = $('#draws-body');
+
+  if (!draws.length) {
+    container.innerHTML = '<p class="empty">Nicio extragere găsită.</p>';
+    return;
+  }
+
+  container.innerHTML = draws.map((draw) => {
+    const matched = getMatchedNumbers(draw.date);
+    const matchCount = matched
+      ? draw.numbers.filter((n) => matched.has(n)).length
+      : 0;
+    const rowClass = matchCount > 0 ? 'draw-card draw-card-match' : 'draw-card';
+
+    return `
+    <article class="${rowClass}">
+      <div class="draw-card-numbers">
+        <div class="numbers numbers-row">
+          ${renderBalls(draw.numbers, matched)}
+        </div>
+      </div>
+      <div class="draw-card-date">
+        ${draw.dateDisplay}
+        ${matchCount ? `<span class="match-count">${matchCount} potriviri</span>` : ''}
+      </div>
+      <div class="draw-card-cat">${renderWinnerBadge(draw.category1)}</div>
+    </article>`;
+  }).join('');
+}
+
+function renderYearSelect(years) {
+  const select = $('#year-select');
+  select.innerHTML = years
+    .slice()
+    .reverse()
+    .map(({ year, draws }) => `
+      <option value="${year}"${year === state.currentYear ? ' selected' : ''}>
+        ${year} (${draws} extrageri)
+      </option>
+    `)
+    .join('');
+}
+
+function renderStats(stats) {
+  $('#stat-draws').textContent = stats.totalDraws.toLocaleString('ro-RO');
+  $('#stat-winners').textContent = stats.winnersCount.toLocaleString('ro-RO');
+  $('#stat-reports').textContent = stats.reportsCount.toLocaleString('ro-RO');
+}
+
+function updateStatus(lastUpdated, status) {
+  const el = $('#last-updated');
+  if (!lastUpdated) {
+    el.textContent = '';
+    return;
+  }
+
+  const updated = new Date(lastUpdated);
+  const dateStr = updated.toLocaleDateString('ro-RO', {
+    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+
+  if (status?.isRefreshing) {
+    el.textContent = `Ultima actualizare: ${dateStr} · se actualizează acum...`;
+    el.classList.add('syncing');
+    return;
+  }
+
+  el.classList.remove('syncing');
+  let text = `Ultima actualizare: ${dateStr}`;
+  if (status?.nextScheduledRefresh) {
+    const next = new Date(status.nextScheduledRefresh);
+    const nextStr = next.toLocaleDateString('ro-RO', {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+    });
+    text += ` · următoarea automată: ${nextStr}`;
+  }
+  el.textContent = text;
+}
+
+async function loadExchangeRate() {
+  try {
+    const res = await fetch('/api/exchange-rate');
+    if (res.ok) {
+      const data = await res.json();
+      state.eurRate = data.rate;
+    }
+  } catch {
+    state.eurRate = 5.2374;
+  }
+}
+
+async function loadVariantMap() {
+  try {
+    const res = await fetch('/api/generator/matches');
+    if (res.ok) {
+      const data = await res.json();
+      state.variantMap = data.matches || {};
+    }
+  } catch {
+    state.variantMap = {};
+  }
+}
+
 async function loadGenerator() {
   try {
     const res = await fetch('/api/generator');
     if (!res.ok) throw new Error('Eroare la încărcarea generatorului');
     const data = await res.json();
-
     $('#disclaimer').textContent = data.disclaimer;
     updateDrawInfo(data);
     renderVariants(data);
   } catch (err) {
     $('#variants-section').innerHTML = `<p class="error-msg">${err.message}</p>`;
+  }
+}
+
+async function loadDraws(year) {
+  const container = $('#draws-body');
+  container.innerHTML = '<p class="loading">Se încarcă...</p>';
+
+  try {
+    const res = await fetch(`/api/draws?year=${year}`);
+    if (!res.ok) throw new Error('Eroare la încărcarea datelor');
+    const data = await res.json();
+
+    $('#section-title').textContent = `Extrageri ${year}`;
+    $('#draw-count').textContent = `${data.count} extrageri`;
+    renderDraws(data.draws);
+  } catch (err) {
+    container.innerHTML = `<p class="error">${err.message}</p>`;
+  }
+}
+
+async function initArchive({ reloadDraws = true } = {}) {
+  try {
+    await Promise.all([loadExchangeRate(), loadVariantMap()]);
+
+    const [statsRes, yearsRes, statusRes] = await Promise.all([
+      fetch('/api/stats'),
+      fetch('/api/years'),
+      fetch('/api/status'),
+    ]);
+
+    if (!statsRes.ok || !yearsRes.ok) {
+      throw new Error('Date indisponibile. Serverul le va prelua automat.');
+    }
+
+    const statsData = await statsRes.json();
+    const yearsData = await yearsRes.json();
+    const statusData = statusRes.ok ? await statusRes.json() : null;
+
+    const dataChanged = state.lastUpdated && state.lastUpdated !== statsData.lastUpdated;
+    state.lastUpdated = statsData.lastUpdated;
+    state.stats = statsData.stats;
+    state.years = yearsData.years;
+
+    renderStats(state.stats);
+    updateStatus(statsData.lastUpdated, statusData);
+
+    const latestYear = state.years[state.years.length - 1]?.year;
+    if (latestYear && !state.currentYear) {
+      state.currentYear = latestYear;
+    }
+
+    renderYearSelect(state.years);
+
+    if (latestYear && (reloadDraws || dataChanged)) {
+      await loadDraws(state.currentYear);
+    }
+  } catch (err) {
+    $('#draws-body').innerHTML = `<p class="error">${err.message}</p>`;
+    $('#hero-stats').style.display = 'none';
+  }
+}
+
+async function pollForUpdates() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) return;
+    const status = await res.json();
+    updateStatus(status.lastUpdated || state.lastUpdated, status);
+
+    if (status.isRefreshing) return;
+    if (status.lastUpdated && status.lastUpdated !== state.lastUpdated) {
+      await loadVariantMap();
+      await loadGenerator();
+      await initArchive({ reloadDraws: true });
+    }
+  } catch {
+    /* ignoră */
   }
 }
 
@@ -138,6 +364,8 @@ $('#btn-generate').addEventListener('click', async () => {
     });
     if (!res.ok) throw new Error('Generare eșuată');
     await loadGenerator();
+    await loadVariantMap();
+    if (state.currentYear) await loadDraws(state.currentYear);
   } catch (err) {
     alert(err.message);
   } finally {
@@ -146,5 +374,12 @@ $('#btn-generate').addEventListener('click', async () => {
   }
 });
 
+$('#year-select').addEventListener('change', (e) => {
+  state.currentYear = parseInt(e.target.value, 10);
+  loadDraws(state.currentYear);
+});
+
 renderAlgoGrid();
 loadGenerator();
+initArchive();
+setInterval(pollForUpdates, POLL_INTERVAL_MS);

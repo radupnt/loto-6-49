@@ -1,5 +1,21 @@
 const POLL_INTERVAL_MS = 2 * 60 * 1000;
 
+const ALGO_FACTORS = [
+  { key: 'frequency', label: 'Frecvență istorică', desc: 'Proximitate de media așteptată per număr principal' },
+  { key: 'recency', label: 'Frecvență recentă', desc: 'Numere active în ultimele 100 extrageri' },
+  { key: 'gap', label: 'Gap temporal', desc: 'Zile de la ultima apariție, normalizat' },
+  { key: 'pairSynergy', label: 'Perechi istorice', desc: 'Co-apariții frecvente între numere principale' },
+  { key: 'recentPairs', label: 'Perechi recente', desc: 'Co-apariții din ultimele 50 extrageri' },
+  { key: 'oddEven', label: 'Par / Impar', desc: 'Distribuție echilibrată 2+3 sau 3+2' },
+  { key: 'sumRange', label: 'Suma numerelor', desc: 'Gaussian centrat pe media istorică' },
+  { key: 'spread', label: 'Distribuție spațială', desc: 'Distanța optimă între numere consecutive' },
+  { key: 'decadeSpread', label: 'Decade', desc: 'Acoperire pe intervale de zeci (1–10, 11–20...)' },
+  { key: 'consecutive', label: 'Consecutive', desc: 'Penalizare numere consecutive' },
+  { key: 'starFrequency', label: 'Stele — frecvență', desc: 'Proximitate de media așteptată per Lucky Star' },
+  { key: 'starGap', label: 'Stele — gap', desc: 'Zile de la ultima apariție a fiecărei stele' },
+  { key: 'starPairSynergy', label: 'Perechi de stele', desc: 'Co-apariții istorice între perechi de stele' },
+];
+
 const state = {
   nextDraw: null,
   years: [],
@@ -11,10 +27,12 @@ const state = {
 
 const $ = (sel) => document.querySelector(sel);
 
-function renderBalls(numbers, matchedSet, extraClass = '') {
+function renderBalls(numbers, matchedSet, extraClass = '', large = false) {
+  const sizeClass = large && !extraClass.includes('ball-star') ? 'ball-lg' : '';
   return numbers
     .map((n) => {
-      const cls = matchedSet?.has(n) ? `ball ball-match ${extraClass}`.trim() : `ball ${extraClass}`.trim();
+      const matchCls = matchedSet?.has(n) ? 'ball-match' : '';
+      const cls = ['ball', sizeClass, extraClass, matchCls].filter(Boolean).join(' ');
       return `<span class="${cls}">${n}</span>`;
     })
     .join('');
@@ -33,7 +51,7 @@ function renderVariant(variant) {
         <span class="variant-score">Scor ${(variant.score * 100).toFixed(1)}%</span>
       </div>
       <div class="variant-balls">
-        ${renderBalls(variant.numbers, null)}
+        ${renderBalls(variant.numbers, null, '', true)}
         <span class="balls-separator">+</span>
         ${renderBalls(variant.stars, null, 'ball-star')}
       </div>
@@ -64,6 +82,15 @@ function renderGenerator(data) {
   }
 
   section.innerHTML = `<div class="variants-grid">${renderVariant(entry.variants[0])}</div>`;
+}
+
+function renderAlgoGrid() {
+  $('#algo-grid').innerHTML = ALGO_FACTORS.map((f) => `
+    <div class="algo-card">
+      <h4>${f.label}</h4>
+      <p>${f.desc}</p>
+    </div>
+  `).join('');
 }
 
 function formatEur(value) {
@@ -122,10 +149,10 @@ function renderDraws(draws) {
     return `
     <article class="${rowClass}">
       <div class="draw-card-numbers">
-        <div class="numbers">
-          ${renderBalls(draw.numbers, numMatched)}
+        <div class="numbers numbers-euro">
+          <div class="numbers-group">${renderBalls(draw.numbers, numMatched)}</div>
           <span class="balls-separator">+</span>
-          ${renderBalls(draw.stars, starMatched, 'ball-star')}
+          <div class="numbers-group numbers-stars">${renderBalls(draw.stars, starMatched, 'ball-star')}</div>
         </div>
       </div>
       <div class="draw-card-date">
@@ -318,4 +345,5 @@ $('#year-select').addEventListener('change', (e) => {
 
 loadGenerator();
 init();
+renderAlgoGrid();
 setInterval(pollForUpdates, POLL_INTERVAL_MS);
