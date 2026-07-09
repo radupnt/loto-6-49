@@ -93,27 +93,29 @@ function renderAlgoGrid() {
   `).join('');
 }
 
-function formatEur(value) {
+function formatMoney(value, currency = 'EUR') {
   if (!value) return '';
   return new Intl.NumberFormat('ro-RO', {
     style: 'currency',
-    currency: 'EUR',
+    currency,
     maximumFractionDigits: 0,
   }).format(value);
 }
 
 function renderWinnerBadge(cat1) {
+  const currency = cat1.currency || 'EUR';
+
   if (cat1.hasWinner) {
     const label = cat1.winners === 1 ? '1 câștigător' : `${cat1.winners} câștigători`;
     return `
       <span class="badge badge-winner">${label}</span>
-      <span class="badge-prize">${formatEur(cat1.prize)}</span>
+      <span class="badge-prize">${formatMoney(cat1.prize, currency)}</span>
     `;
   }
 
   return `
     <span class="badge badge-report">Report</span>
-    <span class="badge-prize">Jackpot ${formatEur(cat1.jackpot)}</span>
+    <span class="badge-prize">Jackpot ${formatMoney(cat1.jackpot, currency)}</span>
   `;
 }
 

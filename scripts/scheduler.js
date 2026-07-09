@@ -1,32 +1,55 @@
-import { getBucharestParts, TZ } from './draw-schedule.js';
+import { getBucharestParts } from './draw-schedule.js';
+import { getLondonParts } from './draw-schedule-euromillions.js';
 
-const DRAW_DAYS = new Set([0, 4]);
+const LOTO_DRAW_DAYS = new Set([0, 4]);
+const EM_DRAW_DAYS = new Set([2, 5]);
 const POST_DRAW_HOUR = 19;
 const POST_DRAW_MINUTE = 30;
+const EM_POST_DRAW_HOUR = 21;
+const EM_POST_DRAW_MINUTE = 30;
 
-let lastPostDrawRefresh = null;
+let lastLotoPostDrawRefresh = null;
+let lastEmPostDrawRefresh = null;
 
-function shouldRunPostDrawRefresh() {
+function shouldRunLotoPostDrawRefresh() {
   const parts = getBucharestParts();
-  if (!DRAW_DAYS.has(parts.weekday)) return false;
+  if (!LOTO_DRAW_DAYS.has(parts.weekday)) return false;
   if (parts.hour < POST_DRAW_HOUR) return false;
   if (parts.hour === POST_DRAW_HOUR && parts.minute < POST_DRAW_MINUTE) return false;
 
   const todayKey = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
-  if (lastPostDrawRefresh === todayKey) return false;
+  if (lastLotoPostDrawRefresh === todayKey) return false;
+  return todayKey;
+}
 
+function shouldRunEmPostDrawRefresh() {
+  const parts = getLondonParts();
+  if (!EM_DRAW_DAYS.has(parts.weekday)) return false;
+  if (parts.hour < EM_POST_DRAW_HOUR) return false;
+  if (parts.hour === EM_POST_DRAW_HOUR && parts.minute < EM_POST_DRAW_MINUTE) return false;
+
+  const todayKey = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
+  if (lastEmPostDrawRefresh === todayKey) return false;
   return todayKey;
 }
 
 function startPostDrawScheduler(onRefresh) {
   setInterval(() => {
-    const todayKey = shouldRunPostDrawRefresh();
-    if (!todayKey) return;
+    const lotoKey = shouldRunLotoPostDrawRefresh();
+    if (lotoKey) {
+      lastLotoPostDrawRefresh = lotoKey;
+      console.log(`[scheduler] Post-extragere Loto ${lotoKey} — actualizare forțată`);
+      onRefresh(`post-extragere loto ${lotoKey}`);
+      return;
+    }
 
-    lastPostDrawRefresh = todayKey;
-    console.log(`[scheduler] Post-extragere ${todayKey} — actualizare forțată`);
-    onRefresh(`post-extragere ${todayKey}`);
+    const emKey = shouldRunEmPostDrawRefresh();
+    if (emKey) {
+      lastEmPostDrawRefresh = emKey;
+      console.log(`[scheduler] Post-extragere EuroMillions ${emKey} — actualizare forțată`);
+      onRefresh(`post-extragere euromillions ${emKey}`);
+    }
   }, 15 * 60 * 1000);
 }
 
-export { startPostDrawScheduler, TZ };
+export { startPostDrawScheduler };

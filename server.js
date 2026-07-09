@@ -42,6 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 let isRefreshing = false;
 let lastRefreshAttempt = null;
 let nextScheduledRefresh = null;
+let lastEmRefreshError = null;
+let lastEmRefreshSource = null;
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -78,6 +80,7 @@ async function autoRefresh(reason) {
 
   try {
     console.log(`[auto-refresh] ${reason}...`);
+    const emUpdatedBefore = loadEmData()?.lastUpdated;
     const [data, emData] = await Promise.all([
       scrape().catch((err) => {
         console.error(`[auto-refresh] Loto: ${err.message}`);
@@ -85,9 +88,14 @@ async function autoRefresh(reason) {
       }),
       scrapeEuromillions().catch((err) => {
         console.error(`[auto-refresh] EuroMillions: ${err.message}`);
+        lastEmRefreshError = err.message;
         return loadEmData();
       }),
     ]);
+    if (emData?.lastUpdated && emData.lastUpdated !== emUpdatedBefore) {
+      lastEmRefreshError = null;
+      lastEmRefreshSource = emData.source || null;
+    }
     console.log(`[auto-refresh] Gata — Loto: ${data?.draws?.length || 0}, EuroMillions: ${emData?.draws?.length || 0}`);
     autoGenerateIfNeeded();
     autoEuromillionsGenerate();
@@ -296,6 +304,8 @@ app.get('/api/euromillions/status', (req, res) => {
   const data = loadEmData();
   res.json({
     lastUpdated: data?.lastUpdated || null,
+    source: data?.source || lastEmRefreshSource || null,
+    lastRefreshError: lastEmRefreshError,
     isRefreshing,
     lastRefreshAttempt,
     nextScheduledRefresh,
