@@ -38,6 +38,12 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 const app = express();
 app.set('trust proxy', 1);
 app.use(express.json());
+const FAVICON_FILE = path.join(__dirname, 'favicon.png');
+app.get(['/favicon.png', '/favicon.ico'], (req, res) => {
+  res.type('png');
+  res.sendFile(FAVICON_FILE);
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 let isRefreshing = false;
