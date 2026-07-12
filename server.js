@@ -21,6 +21,7 @@ import {
   autoGenerateIfNeeded as autoEuromillionsGenerate,
 } from './scripts/generator-euromillions.js';
 import { getEurRate } from './scripts/bnr.js';
+import { getGbpEurRate } from './scripts/exchange.js';
 import { startPostDrawScheduler } from './scripts/scheduler.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -221,6 +222,15 @@ app.post('/api/refresh', async (req, res) => {
 app.get('/api/exchange-rate', async (req, res) => {
   try {
     const data = await getEurRate();
+    res.json({ rate: data.rate, date: data.date, source: data.source });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/exchange-rate/gbp', async (req, res) => {
+  try {
+    const data = await getGbpEurRate();
     res.json({ rate: data.rate, date: data.date, source: data.source });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -11,9 +11,13 @@ const ALGO_FACTORS = [
   { key: 'spread', label: 'Distribuție spațială', desc: 'Distanța optimă între numere consecutive' },
   { key: 'decadeSpread', label: 'Decade', desc: 'Acoperire pe intervale de zeci (1–10, 11–20...)' },
   { key: 'consecutive', label: 'Consecutive', desc: 'Penalizare numere consecutive' },
-  { key: 'starFrequency', label: 'Stele — frecvență', desc: 'Proximitate de media așteptată per Lucky Star' },
-  { key: 'starGap', label: 'Stele — gap', desc: 'Zile de la ultima apariție a fiecărei stele' },
-  { key: 'starPairSynergy', label: 'Perechi de stele', desc: 'Co-apariții istorice între perechi de stele' },
+];
+
+const STAR_ALGO_FACTORS = [
+  { key: 'frequency', label: 'Stele — frecvență', desc: 'Proximitate de media așteptată per Lucky Star' },
+  { key: 'gap', label: 'Stele — gap', desc: 'Zile de la ultima apariție a fiecărei stele' },
+  { key: 'oddEven', label: 'Stele — par/impar', desc: 'Preferință 1 impar + 1 par' },
+  { key: 'pairSynergy', label: 'Perechi de stele', desc: 'Co-apariții istorice între perechi de stele' },
 ];
 
 const state = {
@@ -22,6 +26,7 @@ const state = {
   currentYear: null,
   stats: null,
   lastUpdated: null,
+  gbpEurRate: null,
   variantMap: {},
 };
 
@@ -38,10 +43,30 @@ function renderBalls(numbers, matchedSet, extraClass = '', large = false) {
     .join('');
 }
 
+function renderBreakdown(breakdown, factors = ALGO_FACTORS) {
+  if (!breakdown) return '';
+  return Object.entries(breakdown)
+    .sort((a, b) => b[1] - a[1])
+    .map(([key, val]) => {
+      const factor = factors.find((f) => f.key === key);
+      const pct = Math.round(val * 100);
+      return `
+        <div class="breakdown-row">
+          <span class="breakdown-label">${factor?.label || key}</span>
+          <div class="breakdown-bar"><div class="breakdown-fill" style="width:${pct}%"></div></div>
+          <span class="breakdown-pct">${pct}%</span>
+        </div>`;
+    })
+    .join('');
+}
+
 function renderVariant(variant) {
   const sourceLabel = variant.source === 'auto' ? 'Automat' : 'Manual';
   const sourceClass = variant.source === 'auto' ? 'source-auto' : 'source-manual';
   const meta = variant.meta || {};
+  const starSection = variant.starBreakdown
+    ? `<p class="breakdown-subtitle">Lucky Stars</p>${renderBreakdown(variant.starBreakdown, STAR_ALGO_FACTORS)}`
+    : '';
 
   return `
     <article class="variant-card">
@@ -60,6 +85,10 @@ function renderVariant(variant) {
         <span>${meta.odd} impare · ${meta.even} pare</span>
         <span>Stele: ${meta.starSum || variant.stars.reduce((a, b) => a + b, 0)}</span>
       </div>
+      <details class="variant-details">
+        <summary>Detalii algoritm</summary>
+        <div class="breakdown">${renderBreakdown(variant.breakdown)}${starSection}</div>
+      </details>
     </article>`;
 }
 
@@ -93,7 +122,7 @@ function renderAlgoGrid() {
   `).join('');
 }
 
-function formatMoney(value, currency = 'EUR') {
+function formatMoney(value, currency = 'GBP') {
   if (!value) return '';
   return new Intl.NumberFormat('ro-RO', {
     style: 'currency',
@@ -102,21 +131,58 @@ function formatMoney(value, currency = 'EUR') {
   }).format(value);
 }
 
+function toGbp(amount, currency = 'GBP') {
+  if (!amount) return 0;
+  if (currency === 'GBP') return amount;
+  if (currency === 'EUR' && state.gbpEurRate) return Math.round(amount / state.gbpEurRate);
+  return amount;
+}
+
+function formatEurFromGbp(gbp) {
+  if (!gbp || !state.gbpEurRate) return '';
+  const eur = gbp * state.gbpEurRate;
+  return new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(eur);
+}
+
 function renderWinnerBadge(cat1) {
   const currency = cat1.currency || 'EUR';
+  const eurLine = (gbp) => {
+    const eur = formatEurFromGbp(gbp);
+    return eur ? `<span class="badge-prize badge-eur">≈ ${eur}</span>` : '';
+  };
 
   if (cat1.hasWinner) {
     const label = cat1.winners === 1 ? '1 câștigător' : `${cat1.winners} câștigători`;
+    const gbp = toGbp(cat1.prize, currency);
     return `
       <span class="badge badge-winner">${label}</span>
-      <span class="badge-prize">${formatMoney(cat1.prize, currency)}</span>
+      <span class="badge-prize">${formatMoney(gbp, 'GBP')}</span>
+      ${eurLine(gbp)}
     `;
   }
 
+  const gbp = toGbp(cat1.jackpot, currency);
   return `
     <span class="badge badge-report">Report</span>
-    <span class="badge-prize">Jackpot ${formatMoney(cat1.jackpot, currency)}</span>
+    <span class="badge-prize">Jackpot ${formatMoney(gbp, 'GBP')}</span>
+    ${eurLine(gbp)}
   `;
+}
+
+async function loadGbpEurRate() {
+  try {
+    const res = await fetch('/api/exchange-rate/gbp');
+    if (res.ok) {
+      const data = await res.json();
+      state.gbpEurRate = data.rate;
+    }
+  } catch {
+    state.gbpEurRate = 1.17;
+  }
 }
 
 function getMatched(drawDate) {
@@ -259,7 +325,7 @@ async function loadDraws(year) {
 
 async function init({ reloadDraws = true } = {}) {
   try {
-    await loadVariantMap();
+    await Promise.all([loadGbpEurRate(), loadVariantMap()]);
 
     const [statsRes, yearsRes, statusRes] = await Promise.all([
       fetch('/api/euromillions/stats'),
