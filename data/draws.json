@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-23T13:21:11.055Z",
+  "lastUpdated": "2026-07-23T16:45:15.889Z",
   "source": "https://www.loto49.ro/arhiva-loto49.php | https://www.loto.ro/loto-new/newLotoSiteNexioFinalVersion/web/app2.php/jocuri/649_si_noroc/rezultate_extragere.html",
   "years": [
     2016,
@@ -15,12 +15,12 @@
     2026
   ],
   "stats": {
-    "totalDraws": 1042,
-    "totalNumbersDrawn": 6252,
+    "totalDraws": 1043,
+    "totalNumbersDrawn": 6258,
     "numberFrequency": {
       "1": 123,
       "2": 131,
-      "3": 126,
+      "3": 127,
       "4": 153,
       "5": 154,
       "6": 155,
@@ -37,7 +37,7 @@
       "17": 129,
       "18": 136,
       "19": 135,
-      "20": 131,
+      "20": 132,
       "21": 135,
       "22": 109,
       "23": 140,
@@ -45,9 +45,9 @@
       "25": 148,
       "26": 136,
       "27": 140,
-      "28": 124,
+      "28": 125,
       "29": 103,
-      "30": 134,
+      "30": 135,
       "31": 118,
       "32": 126,
       "33": 120,
@@ -60,8 +60,8 @@
       "40": 136,
       "41": 118,
       "42": 128,
-      "43": 126,
-      "44": 121,
+      "43": 127,
+      "44": 122,
       "45": 117,
       "46": 121,
       "47": 108,
@@ -69,6 +69,12 @@
       "49": 115
     },
     "allNumbers": [
+      43,
+      28,
+      20,
+      3,
+      44,
+      30,
       12,
       19,
       15,
@@ -6407,9 +6413,28 @@
       }
     ],
     "winnersCount": 40,
-    "reportsCount": 1002
+    "reportsCount": 1003
   },
   "draws": [
+    {
+      "date": "2026-07-23",
+      "dateDisplay": "Jo, 23 iulie 2026",
+      "year": 2026,
+      "numbers": [
+        43,
+        28,
+        20,
+        3,
+        44,
+        30
+      ],
+      "category1": {
+        "hasWinner": false,
+        "winners": 0,
+        "prize": 0,
+        "jackpot": 0
+      }
+    },
     {
       "date": "2026-07-19",
       "dateDisplay": "Du, 19 iulie 2026",

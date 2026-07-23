@@ -209,12 +209,65 @@ function loadExisting() {
   }
 }
 
-async function fetchText(url) {
+async function fetchText(url, options = {}) {
   const response = await fetch(url, {
-    headers: { 'User-Agent': UA, Accept: 'text/html,application/xhtml+xml' },
+    ...options,
+    headers: {
+      'User-Agent': UA,
+      Accept: 'text/html,application/xhtml+xml',
+      ...(options.headers || {}),
+    },
   });
   if (!response.ok) throw new Error(`Eroare la ${url}: ${response.status}`);
   return response.text();
+}
+
+async function fetchOfficialMonth(year, month) {
+  const body = new URLSearchParams({
+    'select-year': String(year),
+    'select-month': String(month),
+  });
+  return fetchText(OFFICIAL_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+}
+
+async function scrapeOfficialPrizes() {
+  const now = new Date();
+  const months = [
+    { year: now.getFullYear(), month: now.getMonth() + 1 },
+  ];
+  if (now.getMonth() === 0) {
+    months.push({ year: now.getFullYear() - 1, month: 12 });
+  } else {
+    months.push({ year: now.getFullYear(), month: now.getMonth() });
+  }
+
+  const byDate = new Map();
+
+  // Pagina default (ultimele extrageri)
+  try {
+    const html = await fetchText(OFFICIAL_URL);
+    for (const draw of parseOfficialPage(html)) byDate.set(draw.date, draw);
+  } catch (err) {
+    console.log(`    GET default: ${err.message}`);
+  }
+
+  for (const { year, month } of months) {
+    try {
+      const html = await fetchOfficialMonth(year, month);
+      const draws = parseOfficialPage(html);
+      for (const draw of draws) byDate.set(draw.date, draw);
+      console.log(`    ${year}-${String(month).padStart(2, '0')}: ${draws.length} cu premii`);
+    } catch (err) {
+      console.log(`    ${year}-${String(month).padStart(2, '0')}: ${err.message}`);
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+
+  return [...byDate.values()];
 }
 
 async function scrapeLegacyYears(years) {
@@ -288,14 +341,13 @@ async function scrape() {
   }
 
   try {
-    process.stdout.write('  loto.ro oficial... ');
-    const officialHtml = await fetchText(OFFICIAL_URL);
-    const officialDraws = parseOfficialPage(officialHtml);
+    process.stdout.write('  loto.ro oficial...\n');
+    const officialDraws = await scrapeOfficialPrizes();
     scraped.push(...officialDraws);
     sources.push(OFFICIAL_URL);
-    console.log(`${officialDraws.length} extrageri (cu premii)`);
+    console.log(`  total oficial: ${officialDraws.length} extrageri (cu premii)`);
   } catch (err) {
-    console.log(`EROARE: ${err.message}`);
+    console.log(`  EROARE oficial: ${err.message}`);
   }
 
   // Fallback istoric: încearcă vechiul site doar dacă nu avem deloc date locale

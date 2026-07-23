@@ -131,6 +131,10 @@ function renderAlgoGrid() {
 }
 
 function renderWinnerBadge(cat1) {
+  if (!cat1) {
+    return `<span class="badge badge-report">Premii în actualizare</span>`;
+  }
+
   const eurLine = (ron) => {
     const eur = formatEur(ron);
     return eur ? `<span class="badge-prize badge-eur">≈ ${eur}</span>` : '';
@@ -138,11 +142,17 @@ function renderWinnerBadge(cat1) {
 
   if (cat1.hasWinner) {
     const label = cat1.winners === 1 ? '1 câștigător' : `${cat1.winners} câștigători`;
+    const prizeBlock = cat1.prize > 0
+      ? `<span class="badge-prize">${formatRon(cat1.prize)}</span>${eurLine(cat1.prize)}`
+      : '';
     return `
       <span class="badge badge-winner">${label}</span>
-      <span class="badge-prize">${formatRon(cat1.prize)}</span>
-      ${eurLine(cat1.prize)}
+      ${prizeBlock}
     `;
+  }
+
+  if (!(cat1.jackpot > 0) && !(cat1.prize > 0)) {
+    return `<span class="badge badge-report">Premii în actualizare</span>`;
   }
 
   return `

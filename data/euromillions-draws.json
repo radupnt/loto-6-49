@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-07-23T13:18:56.778Z",
-  "source": "https://www.national-lottery.co.uk/results/euromillions/draw-history/csv (fallback)",
+  "lastUpdated": "2026-07-23T16:40:33.504Z",
+  "source": "https://euromillions.api.pedromealha.dev/draws",
   "game": "EuroMillions UK",
   "years": [
     2016,
@@ -16,96 +16,100 @@
     2026
   ],
   "stats": {
-    "totalDraws": 1100,
+    "totalDraws": 1101,
     "numberFrequency": {
       "1": 100,
-      "2": 115,
-      "3": 107,
+      "2": 114,
+      "3": 106,
       "4": 100,
       "5": 112,
       "6": 105,
       "7": 112,
-      "8": 109,
+      "8": 108,
       "9": 109,
-      "10": 122,
+      "10": 123,
       "11": 98,
-      "12": 111,
+      "12": 112,
       "13": 118,
       "14": 113,
       "15": 110,
       "16": 110,
       "17": 124,
       "18": 91,
-      "19": 119,
+      "19": 120,
       "20": 117,
-      "21": 120,
+      "21": 121,
       "22": 76,
-      "23": 125,
+      "23": 126,
       "24": 109,
       "25": 110,
       "26": 113,
       "27": 120,
-      "28": 107,
+      "28": 106,
       "29": 120,
       "30": 100,
       "31": 105,
       "32": 109,
       "33": 99,
-      "34": 119,
+      "34": 120,
       "35": 120,
       "36": 99,
-      "37": 116,
+      "37": 117,
       "38": 102,
-      "39": 113,
-      "40": 94,
+      "39": 112,
+      "40": 95,
       "41": 109,
-      "42": 131,
+      "42": 132,
       "43": 100,
       "44": 123,
       "45": 117,
       "46": 110,
-      "47": 105,
+      "47": 106,
       "48": 119,
       "49": 106,
       "50": 102
     },
     "starFrequency": {
       "1": 165,
-      "2": 219,
+      "2": 218,
       "3": 205,
       "4": 163,
       "5": 175,
       "6": 197,
       "7": 177,
       "8": 187,
-      "9": 185,
-      "10": 175,
-      "11": 177,
-      "12": 175
+      "9": 187,
+      "10": 176,
+      "11": 176,
+      "12": 176
     },
     "mostFrequent": [
       {
         "number": 42,
-        "count": 131
+        "count": 132
       },
       {
         "number": 23,
-        "count": 125
+        "count": 126
       },
       {
         "number": 17,
         "count": 124
       },
       {
+        "number": 10,
+        "count": 123
+      },
+      {
         "number": 44,
         "count": 123
       },
       {
-        "number": 10,
-        "count": 122
+        "number": 21,
+        "count": 121
       },
       {
-        "number": 21,
+        "number": 19,
         "count": 120
       },
       {
@@ -117,12 +121,8 @@
         "count": 120
       },
       {
-        "number": 35,
+        "number": 34,
         "count": 120
-      },
-      {
-        "number": 19,
-        "count": 119
       }
     ],
     "leastFrequent": [
@@ -136,7 +136,7 @@
       },
       {
         "number": 40,
-        "count": 94
+        "count": 95
       },
       {
         "number": 11,
@@ -168,31 +168,55 @@
       }
     ],
     "winnersCount": 188,
-    "reportsCount": 912
+    "reportsCount": 913
   },
   "draws": [
     {
-      "date": "2026-07-21",
-      "dateDisplay": "Marți, 21 iulie 2026",
+      "date": "2026-07-17",
+      "dateDisplay": "Vineri, 17 iulie 2026",
       "year": 2026,
       "numbers": [
-        2,
-        3,
-        8,
-        28,
-        39
+        12,
+        21,
+        23,
+        34,
+        40
       ],
       "stars": [
-        2,
-        11
+        9,
+        10
       ],
-      "drawNumber": 1965,
+      "drawNumber": 572026,
       "category1": {
         "hasWinner": false,
         "winners": 0,
         "prize": 0,
-        "jackpot": 50541113,
-        "currency": "GBP"
+        "jackpot": 49675417,
+        "currency": "EUR"
+      }
+    },
+    {
+      "date": "2026-07-14",
+      "dateDisplay": "Marți, 14 iulie 2026",
+      "year": 2026,
+      "numbers": [
+        10,
+        19,
+        37,
+        42,
+        47
+      ],
+      "stars": [
+        9,
+        12
+      ],
+      "drawNumber": 562026,
+      "category1": {
+        "hasWinner": false,
+        "winners": 0,
+        "prize": 0,
+        "jackpot": 37595911,
+        "currency": "EUR"
       }
     },
     {
