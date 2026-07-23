@@ -151,9 +151,67 @@ a:hover {
   color: var(--text);
 }
 
+.nav-icon-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.nav-icon-btn:hover,
+.nav-icon-btn.active {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .theme-icon {
   width: 20px;
   height: 20px;
+}
+
+.history-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-game {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.history-when,
+.history-draw {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.history-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.history-country {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
 }
 
 .nav-link {

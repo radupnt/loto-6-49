@@ -23,6 +23,7 @@ import {
 import { getEurRate } from './scripts/bnr.js';
 import { getGbpEurRate } from './scripts/exchange.js';
 import { startPostDrawScheduler } from './scripts/scheduler.js';
+import { appendHistoryEntry, getHistoryWithMatches } from './scripts/history.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.join(__dirname, 'data', 'draws.json');
@@ -260,16 +261,37 @@ app.get('/api/generator', (req, res) => {
   }
 });
 
-app.post('/api/generator/generate', (req, res) => {
+app.post('/api/generator/generate', async (req, res) => {
   try {
     const { drawKey } = req.body || {};
     const result = manualGenerate(drawKey || null);
+
+    try {
+      await appendHistoryEntry({
+        req,
+        game: 'loto649',
+        drawKey: result.draw.key,
+        drawDisplay: result.draw.display,
+        numbers: result.variant.numbers,
+      });
+    } catch (histErr) {
+      console.warn(`[history] Loto log failed: ${histErr.message}`);
+    }
+
     res.json({
       success: true,
       draw: result.draw,
       variant: result.variant,
       entry: result.entry,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/history', (req, res) => {
+  try {
+    res.json(getHistoryWithMatches());
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -346,10 +368,24 @@ app.get('/api/euromillions/generator', (req, res) => {
   }
 });
 
-app.post('/api/euromillions/generator/generate', (req, res) => {
+app.post('/api/euromillions/generator/generate', async (req, res) => {
   try {
     const { drawKey } = req.body || {};
     const result = manualEuromillionsGenerate(drawKey || null);
+
+    try {
+      await appendHistoryEntry({
+        req,
+        game: 'euromillions',
+        drawKey: result.draw.key,
+        drawDisplay: result.draw.display,
+        numbers: result.variant.numbers,
+        stars: result.variant.stars,
+      });
+    } catch (histErr) {
+      console.warn(`[history] EuroMillions log failed: ${histErr.message}`);
+    }
+
     res.json({
       success: true,
       draw: result.draw,

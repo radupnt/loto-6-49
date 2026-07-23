@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Istoric generări — Loto Hub</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Loto Hub</a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="/" class="nav-link">Loto 6/49</a>
+          <a href="/euromillions.html" class="nav-link">EuroMillions</a>
+        </div>
+        <a href="/istoric.html" class="nav-icon-btn active" id="history-link" aria-label="Istoric generări" title="Istoric generări">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 2"/>
+          </svg>
+        </a>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Schimbă tema"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main main-generator">
+    <header class="hero hero-compact hero-intro">
+      <h1 class="hero-title">Istoric generări.</h1>
+      <p class="hero-subtitle">Variante generate manual de vizitatori. Doar țara, fără IP. Potrivirile verzi apar după ce extragerea reală e în arhivă.</p>
+      <p class="hero-updated" id="history-meta"></p>
+    </header>
+
+    <section class="archive-section">
+      <p class="match-legend">Numerele (și stelele) cu fundal verde au ieșit la extragerea pentru care au fost generate.</p>
+
+      <section class="table-section">
+        <div class="table-header">
+          <h2 class="section-title">Generări recente</h2>
+          <span class="draw-count" id="history-count"></span>
+        </div>
+        <div class="table-wrapper">
+          <div class="draws-list" id="history-body">
+            <p class="loading">Se încarcă istoricul...</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Doar generări manuale · fără variante AUTO · fără IP</p>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/istoric.js"></script>
+</body>
+</html>
