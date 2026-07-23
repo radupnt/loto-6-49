@@ -1,4 +1,25 @@
 {
-  "updatedAt": null,
-  "entries": []
+  "updatedAt": "2026-07-23T17:20:13.101Z",
+  "entries": [
+    {
+      "id": "dc30d6c2-20f2-4cf4-ac18-dac3fa89e830",
+      "createdAt": "2026-07-23T17:20:13.101Z",
+      "game": "euromillions",
+      "drawKey": "2026-07-24",
+      "drawDisplay": "Vineri, 24 iulie 2026, ora 20:45 (UK)",
+      "numbers": [
+        5,
+        8,
+        29,
+        33,
+        46
+      ],
+      "stars": [
+        6,
+        9
+      ],
+      "countryCode": "RO",
+      "country": "România"
+    }
+  ]
 }
