@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-07-12T06:07:47.683Z",
-  "source": "https://euromillions.api.pedromealha.dev/draws",
+  "lastUpdated": "2026-07-23T13:18:56.778Z",
+  "source": "https://www.national-lottery.co.uk/results/euromillions/draw-history/csv (fallback)",
   "game": "EuroMillions UK",
   "years": [
     2016,
@@ -16,16 +16,16 @@
     2026
   ],
   "stats": {
-    "totalDraws": 1099,
+    "totalDraws": 1100,
     "numberFrequency": {
       "1": 100,
-      "2": 114,
-      "3": 106,
+      "2": 115,
+      "3": 107,
       "4": 100,
       "5": 112,
       "6": 105,
       "7": 112,
-      "8": 108,
+      "8": 109,
       "9": 109,
       "10": 122,
       "11": 98,
@@ -45,7 +45,7 @@
       "25": 110,
       "26": 113,
       "27": 120,
-      "28": 106,
+      "28": 107,
       "29": 120,
       "30": 100,
       "31": 105,
@@ -56,7 +56,7 @@
       "36": 99,
       "37": 116,
       "38": 102,
-      "39": 112,
+      "39": 113,
       "40": 94,
       "41": 109,
       "42": 131,
@@ -71,7 +71,7 @@
     },
     "starFrequency": {
       "1": 165,
-      "2": 218,
+      "2": 219,
       "3": 205,
       "4": 163,
       "5": 175,
@@ -80,7 +80,7 @@
       "8": 187,
       "9": 185,
       "10": 175,
-      "11": 176,
+      "11": 177,
       "12": 175
     },
     "mostFrequent": [
@@ -168,9 +168,33 @@
       }
     ],
     "winnersCount": 188,
-    "reportsCount": 911
+    "reportsCount": 912
   },
   "draws": [
+    {
+      "date": "2026-07-21",
+      "dateDisplay": "Marți, 21 iulie 2026",
+      "year": 2026,
+      "numbers": [
+        2,
+        3,
+        8,
+        28,
+        39
+      ],
+      "stars": [
+        2,
+        11
+      ],
+      "drawNumber": 1965,
+      "category1": {
+        "hasWinner": false,
+        "winners": 0,
+        "prize": 0,
+        "jackpot": 50541113,
+        "currency": "GBP"
+      }
+    },
     {
       "date": "2026-07-10",
       "dateDisplay": "Vineri, 10 iulie 2026",
