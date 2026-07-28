@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-07-28T18:07:03.676Z",
+  "updatedAt": "2026-07-28T18:07:17.349Z",
   "entries": [
+    {
+      "id": "fe5cd576-7eb9-418e-9e40-b0efbf418fa0",
+      "createdAt": "2026-07-28T18:07:17.349Z",
+      "game": "euromillions",
+      "drawKey": "2026-07-28",
+      "drawDisplay": "Marți, 28 iulie 2026, ora 20:45 (UK)",
+      "numbers": [
+        5,
+        8,
+        29,
+        42,
+        47
+      ],
+      "stars": [
+        6,
+        9
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "d35ae36e-3535-4cda-b50a-80e5cc193be2",
       "createdAt": "2026-07-28T18:07:03.671Z",
