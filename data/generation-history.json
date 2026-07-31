@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-07-28T18:07:29.244Z",
+  "updatedAt": "2026-07-31T18:19:36.258Z",
   "entries": [
+    {
+      "id": "0f86ffeb-7abd-47ba-a749-6604d96b49bb",
+      "createdAt": "2026-07-31T18:19:36.256Z",
+      "game": "euromillions",
+      "drawKey": "2026-07-31",
+      "drawDisplay": "Vineri, 31 iulie 2026, ora 20:45 (UK)",
+      "numbers": [
+        2,
+        19,
+        23,
+        37,
+        44
+      ],
+      "stars": [
+        6,
+        9
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "2c102176-9421-4acf-b031-ff18ba5f6d42",
       "createdAt": "2026-07-28T18:07:29.244Z",
