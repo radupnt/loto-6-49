@@ -1,6 +1,24 @@
 {
-  "updatedAt": "2026-07-31T18:19:36.258Z",
+  "updatedAt": "2026-08-06T08:08:40.458Z",
   "entries": [
+    {
+      "id": "905b3895-379c-4465-a589-37cd42f3692b",
+      "createdAt": "2026-08-06T08:08:40.456Z",
+      "game": "loto649",
+      "drawKey": "2026-08-06",
+      "drawDisplay": "Joi, 6 august 2026, ora 18:30",
+      "numbers": [
+        6,
+        14,
+        19,
+        21,
+        40,
+        43
+      ],
+      "stars": null,
+      "countryCode": "RO",
+      "country": "România"
+    },
     {
       "id": "0f86ffeb-7abd-47ba-a749-6604d96b49bb",
       "createdAt": "2026-07-31T18:19:36.256Z",
