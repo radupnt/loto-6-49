@@ -1,6 +1,24 @@
 {
-  "updatedAt": "2026-08-06T08:08:40.458Z",
+  "updatedAt": "2026-08-07T06:16:46.385Z",
   "entries": [
+    {
+      "id": "3cb7d456-f5b8-4f63-bbe3-0a2be3a33d38",
+      "createdAt": "2026-08-07T06:16:46.381Z",
+      "game": "loto649",
+      "drawKey": "2026-08-09",
+      "drawDisplay": "Duminică, 9 august 2026, ora 18:30",
+      "numbers": [
+        4,
+        7,
+        26,
+        36,
+        39,
+        43
+      ],
+      "stars": null,
+      "countryCode": "RO",
+      "country": "România"
+    },
     {
       "id": "905b3895-379c-4465-a589-37cd42f3692b",
       "createdAt": "2026-08-06T08:08:40.456Z",
