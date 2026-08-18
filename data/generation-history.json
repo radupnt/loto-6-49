@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-08-08T10:54:10.444Z",
+  "updatedAt": "2026-08-18T17:20:32.545Z",
   "entries": [
+    {
+      "id": "770a7ded-eb06-4701-9f44-19c83ee57637",
+      "createdAt": "2026-08-18T17:20:32.545Z",
+      "game": "euromillions",
+      "drawKey": "2026-08-18",
+      "drawDisplay": "Marți, 18 august 2026, ora 20:45 (UK)",
+      "numbers": [
+        10,
+        13,
+        19,
+        37,
+        42
+      ],
+      "stars": [
+        6,
+        9
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "bbe1cd3e-f151-46b2-a3ce-b6e01c594ad5",
       "createdAt": "2026-08-08T10:54:10.444Z",
