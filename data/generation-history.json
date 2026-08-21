@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-08-18T17:20:32.545Z",
+  "updatedAt": "2026-08-21T18:10:54.156Z",
   "entries": [
+    {
+      "id": "3572c2e5-5ac6-4991-81eb-7fef76452fdf",
+      "createdAt": "2026-08-21T18:10:54.091Z",
+      "game": "euromillions",
+      "drawKey": "2026-08-21",
+      "drawDisplay": "Vineri, 21 august 2026, ora 20:45 (UK)",
+      "numbers": [
+        2,
+        10,
+        19,
+        42,
+        45
+      ],
+      "stars": [
+        9,
+        12
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "770a7ded-eb06-4701-9f44-19c83ee57637",
       "createdAt": "2026-08-18T17:20:32.545Z",
