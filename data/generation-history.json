@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-08-21T18:11:08.760Z",
+  "updatedAt": "2026-09-04T18:27:28.265Z",
   "entries": [
+    {
+      "id": "688ded0f-3660-44d0-b09d-b1824c9a9e98",
+      "createdAt": "2026-09-04T18:27:28.264Z",
+      "game": "euromillions",
+      "drawKey": "2026-09-04",
+      "drawDisplay": "Vineri, 4 septembrie 2026, ora 20:45 (UK)",
+      "numbers": [
+        5,
+        8,
+        29,
+        33,
+        48
+      ],
+      "stars": [
+        6,
+        9
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "74db73a4-c4dc-4e8c-bde8-ca4a91fdb804",
       "createdAt": "2026-08-21T18:11:08.760Z",
