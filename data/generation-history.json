@@ -1,6 +1,26 @@
 {
-  "updatedAt": "2026-09-22T18:09:46.281Z",
+  "updatedAt": "2026-10-23T18:05:20.125Z",
   "entries": [
+    {
+      "id": "bbc00f20-db78-4fe7-9e85-4c6e0d08d487",
+      "createdAt": "2026-10-23T18:05:20.125Z",
+      "game": "euromillions",
+      "drawKey": "2026-10-23",
+      "drawDisplay": "Vineri, 23 octombrie 2026, ora 20:45 (UK)",
+      "numbers": [
+        10,
+        14,
+        19,
+        42,
+        45
+      ],
+      "stars": [
+        8,
+        11
+      ],
+      "countryCode": "GB",
+      "country": "United Kingdom"
+    },
     {
       "id": "0f3055ae-29d9-4668-b992-929375c380b1",
       "createdAt": "2026-09-22T18:09:46.281Z",
